@@ -36,19 +36,35 @@ void FirstPersonCamera::update(float dt)
 {
 	float vel = m_speed * dt;
 	bool mouseMove = m_handler->mouseHasMoved();
-
+	bool isShifted = false;
 	if (m_handler->keyHasBeenPressed()) {
-		if (m_handler->isKeyPressed(GLFW_KEY_W)) {
-			m_position += m_front * vel;
+		if (m_handler->isKeyPressed(GLFW_KEY_LEFT_SHIFT))
+		{
+			isShifted = true;
 		}
-		if (m_handler->isKeyPressed(GLFW_KEY_S)) {
-			m_position -= m_front * vel;
+		if (m_handler->isKeyPressed(GLFW_KEY_W)) 
+		{
+			m_position += m_front * vel * static_cast<float>(1 + isShifted);
 		}
-		if (m_handler->isKeyPressed(GLFW_KEY_A)) {
-			m_position -= m_right * vel;
+		if (m_handler->isKeyPressed(GLFW_KEY_S)) 
+		{
+			m_position -= m_front * vel * static_cast<float>(1 + isShifted);
 		}
-		if (m_handler->isKeyPressed(GLFW_KEY_D)) {
-			m_position += m_right * vel;
+		if (m_handler->isKeyPressed(GLFW_KEY_A))
+		{
+			m_position -= m_right * vel * static_cast<float>(1 + isShifted);
+		}
+		if (m_handler->isKeyPressed(GLFW_KEY_D)) 
+		{
+			m_position += m_right * vel * static_cast<float>(1 + isShifted);
+		}
+		if (m_handler->isKeyPressed(GLFW_KEY_LEFT_CONTROL))
+		{
+			m_position -= m_up * vel * static_cast<float>(1 + isShifted);
+		}
+		if (m_handler->isKeyPressed(GLFW_KEY_SPACE))
+		{
+			m_position -= m_up * -vel * static_cast<float>(1 + isShifted);
 		}
 	}
 

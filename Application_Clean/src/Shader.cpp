@@ -4,17 +4,28 @@
 #include <sstream>
 #include <iostream>
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
+Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, const char* tessEvalPath, const char* tessCtrlPath)
 {
 	// 1. retrieve the vertex/fragment source code from filePath
 	std::string vertexCode;
 	std::string fragmentCode;
+	std::string geometryCode;
+	std::string tessEvalCode;
+	std::string tessCtrlCode;
+
 	std::ifstream vShaderFile;
 	std::ifstream fShaderFile;
+	std::ifstream gShaderFile;
+	std::ifstream tessEvalFile;
+	std::ifstream tessCtrlFile;
 
 	// ensure ifstream objects can throw exceptions:
 	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	tessEvalFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	tessCtrlFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
 
 	try
 	{
@@ -31,6 +42,31 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 		// convert stream into string
 		vertexCode = vShaderStream.str();
 		fragmentCode = fShaderStream.str();
+		// if geometry shader path is present, also load a geometry shader
+		if (geometryPath != nullptr)
+		{
+			gShaderFile.open(geometryPath);
+			std::stringstream gShaderStream;
+			gShaderStream << gShaderFile.rdbuf();
+			gShaderFile.close();
+			geometryCode = gShaderStream.str();
+		}
+		if (tessEvalPath != nullptr)
+		{
+			tessEvalFile.open(tessEvalPath);
+			std::stringstream tessEvalStream;
+			tessEvalStream << tessEvalFile.rdbuf();
+			tessEvalFile.close();
+			tessEvalCode = tessEvalStream.str();
+		}
+		if (tessCtrlPath != nullptr)
+		{
+			tessCtrlFile.open(tessCtrlPath);
+			std::stringstream tessCtrlStream;
+			tessCtrlStream << tessCtrlFile.rdbuf();
+			tessCtrlFile.close();
+			tessCtrlCode = tessCtrlStream.str();
+		}
 
 
 	}
@@ -40,8 +76,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	}
 	const char* vShaderCode = vertexCode.c_str();
 	const char* fShaderCode = fragmentCode.c_str();
-
-
+	
 	// 2. compile shaders
 	unsigned int vertex, fragment;
 	// vertex shader
@@ -54,14 +89,51 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	glShaderSource(fragment, 1, &fShaderCode, NULL);
 	glCompileShader(fragment);
 	checkCompileErrors(fragment, "FRAGMENT");
-
+	// if geometry shader is given, compile geometry shader
+	unsigned int geometry;
+	if (geometryPath != nullptr)
+	{
+		const char* gShaderCode = geometryCode.c_str();
+		geometry = glCreateShader(GL_GEOMETRY_SHADER);
+		glShaderSource(geometry, 1, &gShaderCode, NULL);
+		glCompileShader(geometry);
+		checkCompileErrors(geometry, "GEOMETRY");
+		std::cout << " loaded GEO" << std::endl;
+	}
+	unsigned int tessEval;
+	if (tessEvalPath != nullptr)
+	{
+		const char* tessEvalShaderCode = tessEvalCode.c_str();
+		tessEval = glCreateShader(GL_TESS_EVALUATION_SHADER);
+		glShaderSource(tessEval, 1, &tessEvalShaderCode, NULL);
+		glCompileShader(tessEval);
+		checkCompileErrors(tessEval, "TESS_EVAL");
+		std::cout << " loaded TESS_EVAL" << std::endl;
+	}
+	unsigned int tessCtrl;
+	if (tessCtrlPath != nullptr)
+	{
+		const char* tessCtrlShaderCode = tessCtrlCode.c_str();
+		tessCtrl = glCreateShader(GL_TESS_CONTROL_SHADER);
+		glShaderSource(tessCtrl, 1, &tessCtrlShaderCode, NULL);
+		glCompileShader(tessCtrl);
+		checkCompileErrors(tessCtrl, "TESS_CTRL");
+		std::cout << " loaded TESS_CTRL" << std::endl;
+	}
 
 	// shader Program
 	ID = glCreateProgram();
 	glAttachShader(ID, vertex);
 	glAttachShader(ID, fragment);
+	if (geometryPath != nullptr)
+		glAttachShader(ID, geometry);
+	if (tessEvalPath != nullptr)
+		glAttachShader(ID, tessEval);
+	if (tessCtrlPath != nullptr)
+		glAttachShader(ID, tessCtrl);
 	glLinkProgram(ID);
 	checkCompileErrors(ID, "PROGRAM");
+	
 	// delete the shaders as they're linked into our program now and no longer necessery
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);

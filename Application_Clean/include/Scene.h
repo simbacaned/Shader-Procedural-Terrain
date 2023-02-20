@@ -11,14 +11,14 @@ class Scene {
 
 public:
 	Scene(GLFWwindow* window, std::shared_ptr<InputHandler> H);
-	~Scene();
+	void setLightingUniforms(std::unique_ptr<Shader>& shader);
 	void update(float dt) ;
 private:
 	GLFWwindow* m_window;
 	std::shared_ptr<InputHandler> m_handler;
 	std::shared_ptr<FirstPersonCamera> m_camera;
 	std::shared_ptr<Terrain> m_terrain;
-	Shader* m_terrainShader;   
+	std::unique_ptr<Shader> m_terrainShader;   
 	glm::mat4 m_model, m_view, m_projection;
 
 };

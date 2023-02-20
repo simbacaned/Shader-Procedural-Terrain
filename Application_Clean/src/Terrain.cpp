@@ -28,7 +28,7 @@ Terrain::Terrain(int widthIn, int heightIn, int stepSizeIn) :
 void Terrain::render()
 {
 	glBindVertexArray(m_VAO);
-	glDrawArrays(GL_TRIANGLES, 0, m_vertices.size());
+	glDrawArrays(GL_PATCHES, 0, m_vertices.size());
 }
 
 // creates VAO and VBO from vertex data

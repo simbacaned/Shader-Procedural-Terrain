@@ -18,7 +18,7 @@ class Shader
 {
 public:
 
-	Shader(const char* vertexPath, const char* fragmentPath);
+	Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr, const char* tessEvalPath = nullptr, const char* tessCtrlPath = nullptr);
 	void use();
 	inline unsigned int getID() const { return ID; }
 	// utility uniform functions

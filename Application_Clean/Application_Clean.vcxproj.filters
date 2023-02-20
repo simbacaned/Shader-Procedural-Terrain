@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{f2d5ba8e-7984-4e18-b874-7d381320deae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EntryPoint.cpp">
@@ -68,5 +71,22 @@
     <ClInclude Include="include\Terrain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Shaders\plainFrag.fs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\plainVert.vs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\tessE.tes">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\Norms.gs">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\tessC.tcs">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

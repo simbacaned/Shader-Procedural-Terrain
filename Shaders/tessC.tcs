@@ -1,0 +1,51 @@
+// first step of tesselation shader
+// tesselation control shader add/deletes control points and determines the tesselatation level
+// patch has three control points here (three vertices for each triangle)
+
+#version 450 core
+layout (vertices =3) out;
+
+float GetTessLevel(float Distance0, float Distance1);
+
+// vectors stored as arrays - each patch has three vertices, each with an xyz pos and xyz norm value 
+//posVS = position from Vertex Shader, posTC = position from this Tesselation Control shader
+
+in vec3 FragPos[] ;
+in vec2 TexCoords[] ;
+
+out vec3 FragPosTC[] ;
+out vec2 TexCoordsTC[] ;
+
+uniform vec3 viewPos ;
+
+void main()
+{
+    float eyeToVertDist0 = distance (viewPos, FragPos[0]);
+    float eyeToVertDist1 = distance (viewPos, FragPos[1]);
+    float eyeToVertDist2 = distance (viewPos, FragPos[2]);
+
+   // gpu can calculate each control point in parallel
+   // tesselation level same for entire patch so only need to set it once (for the first control point)
+   // gl_invocation called for each control point
+   if (gl_InvocationID==0)
+   {
+		   // Calculate the tessellation levels
+          gl_TessLevelOuter[0] = GetTessLevel(eyeToVertDist1, eyeToVertDist2) ; 
+          gl_TessLevelOuter[1] = GetTessLevel(eyeToVertDist2, eyeToVertDist0) ;  
+          gl_TessLevelOuter[2] = GetTessLevel(eyeToVertDist0, eyeToVertDist1) ; 
+          gl_TessLevelInner[0] = gl_TessLevelOuter[2] ; 
+
+   }
+
+   // pass through position and normal information
+   FragPosTC[gl_InvocationID]  = FragPos[gl_InvocationID] ;
+   TexCoordsTC[gl_InvocationID] = TexCoords[gl_InvocationID] ;
+
+}
+
+float GetTessLevel(float Distance0, float Distance1)
+{
+    float avgDistance = (Distance0 + Distance1) / 2.0;
+    avgDistance = (20 / log(1.0f * avgDistance))-2;
+    return max(1,avgDistance);
+}

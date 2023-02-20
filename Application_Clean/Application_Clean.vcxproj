@@ -165,6 +165,13 @@
     <ClInclude Include="include\Terrain.h" />
     <ClInclude Include="include\WindowManager.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Shaders\Norms.gs" />
+    <None Include="..\Shaders\plainFrag.fs" />
+    <None Include="..\Shaders\plainVert.vs" />
+    <None Include="..\Shaders\tessC.tcs" />
+    <None Include="..\Shaders\tessE.tes" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

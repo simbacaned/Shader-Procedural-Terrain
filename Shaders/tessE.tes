@@ -1,0 +1,49 @@
+#version 450 core
+
+// reading in a triangle, split tesselated triangels evenly in a counter-clockwise direction (ccw)
+layout(triangles, fractional_even_spacing, ccw) in;
+
+// forward declare functions to perfrom interpolation with the barycentric coordinates from the Primitive Generator
+vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2);
+vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2);
+
+
+// unifrom matrices to perform transformations
+// previously this would have been done in vertex shader
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+// read in vector arrays from previous shader
+in vec3 FragPosTC[] ;
+in vec2 TexCoordsTC[] ;
+
+// pass along the interpolated values
+out vec3 FragPosE ;
+out vec2 TexCoordsE ;
+
+
+
+void main()
+{
+    // interpolate the normal and xyz position using the linear interpolation function
+    TexCoordsE = interpolate2D(TexCoordsTC[0], TexCoordsTC[1], TexCoordsTC[2]);
+    // use 3D because they are in three dimensions; 2D also included for uv texture coordinates
+    FragPosE = interpolate3D(FragPosTC[0], FragPosTC[1], FragPosTC[2]);
+
+   // transform vertex to clip space  - NOTE: WE NEED TO DO IT HERE NOW and not in vertex shader
+   gl_Position = projection * view * vec4(FragPosE, 1.0);
+} 
+
+
+//basic linear interpolation
+vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2)
+{
+    return vec2(gl_TessCoord.x) * v0 + vec2(gl_TessCoord.y) * v1 + vec2(gl_TessCoord.z) * v2;
+}
+
+vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2)
+{
+   	return vec3(gl_TessCoord.x) * v0 + vec3(gl_TessCoord.y) * v1 + vec3(gl_TessCoord.z) * v2;
+}
+
