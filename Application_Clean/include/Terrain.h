@@ -17,6 +17,7 @@ Use this class as the start point
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <array>
 #include "Shader.h"
 
 
@@ -30,10 +31,11 @@ public:
 	void render();
 
 
+
 private:
 	std::vector<float> m_vertices;
 	unsigned int m_VAO, m_VBO, m_EBO;
-	int m_indices[60] = {
+	std::array<int, 60> m_indices = {
    0,4,1, 0,9,4, 9,5,4, 4,5,8, 4,8,1,
    8,10,1, 8,3,10, 5,3,8, 5,2,3, 2,7,3,
    7,10,3, 7,6,10, 7,11,6, 11,0,6, 0,1,6,
@@ -42,10 +44,10 @@ private:
 	int m_cellSize = 10;  // size of cell in grid and default values
 	int m_width = 50;      // how many cells wide
 	int m_height = 50;    // how many cells high (or long)
-	
+
 	// calculate vertex positions and UV values
 	void makeVertices();
-	void makeVertex(int x, int z);
+	void makeVertex(std::vector<float>& height, int width, int x, int z);
 
 	// setters
 	void setVAO();

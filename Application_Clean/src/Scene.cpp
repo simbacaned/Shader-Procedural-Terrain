@@ -6,6 +6,7 @@ m_handler(H)
 {
 	// Shader
 	m_terrainShader = std::make_unique<Shader>("..\\shaders\\plainVert.vs", "..\\shaders\\plainFrag.fs", "..\\shaders\\Norms.gs", "..\\shaders\\tessE.tes", "..\\shaders\\tessC.tcs");
+	//m_terrainShader = std::make_unique<Shader>("..\\shaders\\plainVert.vs", "..\\shaders\\plainFrag.fs", "..\\shaders\\Norms.gs");
 	m_terrainShader->use();
 	// Camera & Input
 	m_camera = std::make_shared<FirstPersonCamera>(glm::vec3(260, 50, 300));   // xyz argument to set starting position of camera
