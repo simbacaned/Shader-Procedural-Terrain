@@ -8,7 +8,7 @@ vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2);
 vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2);
 
 
-// unifrom matrices to perform transformations
+// uniform matrices to perform transformations
 // previously this would have been done in vertex shader
 uniform mat4 model;
 uniform mat4 view;

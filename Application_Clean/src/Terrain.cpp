@@ -1,14 +1,13 @@
 #include "..\include\Terrain.h"
 #include "stb_image.h"
 
-
 // constructors
 
 Terrain::Terrain()
 {
 	makeVertices();
 	setVAO();
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_DEPTH_TEST);
 }
 
@@ -19,10 +18,19 @@ Terrain::Terrain(int widthIn, int heightIn, int stepSizeIn) :
 {
 	makeVertices();
 	setVAO();
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_DEPTH_TEST);
 }
 
+void Terrain::setLine()
+{
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
+
+void Terrain::setFill()
+{
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
 // render function, binds VAO and makes draw call
 // you will certainly want to update this - for example with a renderer class and pass data, material, and model matrix to renderer
 void Terrain::render()
@@ -83,9 +91,9 @@ void Terrain::makeVertices()
 	}
 	std::cout << heights.size() << std::endl;
 
-	for (int z = 0; z < m_height - 1; z++) {
+	for (int z = 0; z < m_height; z++) {
 		float  offSetZ = z * m_cellSize;
-		for (int x = 0; x < m_width - 1; x++) {
+		for (int x = 0; x < m_width; x++) {
 			float offSetX = x * m_cellSize;
 			makeVertex(heights, width, offSetX, offSetZ);  // a
 			makeVertex(heights, width, offSetX, offSetZ + m_cellSize);  // b
@@ -95,50 +103,15 @@ void Terrain::makeVertices()
 			makeVertex(heights, width, offSetX + m_cellSize, offSetZ + m_cellSize);  //f
 		}
 	}
-
-	// Calculate normals
-
-	for (size_t i = 0; i < m_indices.size(); i += 3)
-	{
-		size_t index0 = m_indices[i];
-		size_t index1 = m_indices[i + 1];
-		size_t index2 = m_indices[i + 2];
-
-		glm::vec3 pos0, pos1, pos2;
-
-		pos0.x = m_vertices[index0 * 8];
-		pos0.y = m_vertices[index0 * 8 + 1];
-		pos0.z = m_vertices[index0 * 8 + 2];
-
-		pos1.x = m_vertices[index1 * 8];
-		pos1.y = m_vertices[index1 * 8 + 1];
-		pos1.z = m_vertices[index1 * 8 + 2];
-
-		pos2.x = m_vertices[index2 * 8];
-		pos2.y = m_vertices[index2 * 8 + 1];
-		pos2.z = m_vertices[index2 * 8 + 2];
-
-		glm::vec3 normal = glm::normalize(glm::cross(pos1 - pos0, pos2 - pos0));
-
-		m_vertices[index0 * 8 + 3] = normal.x;
-		m_vertices[index0 * 8 + 4] = normal.y;
-		m_vertices[index0 * 8 + 5] = normal.z;
-
-		m_vertices[index1 * 8 + 3] = normal.x;
-		m_vertices[index1 * 8 + 4] = normal.y;
-		m_vertices[index1 * 8 + 5] = normal.z;
-
-		m_vertices[index2 * 8 + 3] = normal.x;
-		m_vertices[index2 * 8 + 4] = normal.y;
-		m_vertices[index2 * 8 + 5] = normal.z;
-	}
 }
 
 void Terrain::makeVertex(std::vector<float>& height, int width, int x, int z)
 {
-		//x y z position
+	glm::vec3 pos = glm::vec3(x, z, 0.001);
+	double pn = cycleOctaves(pos, 10);
+	//x y z position
 	m_vertices.push_back((float)x); //xPos
-	m_vertices.push_back(height[x * width + z] * 10); //yPos - always 0 for now. Going to calculate this on GPU - could change to calclaute it here.
+	m_vertices.push_back(pn); //yPos - always 0 for now. Going to calculate this on GPU - could change to calclaute it here.
 	//m_vertices.push_back(0); //yPos - always 0 for now. Going to calculate this on GPU - could change to calclaute it here.
 	m_vertices.push_back((float)z); //zPos
 
@@ -146,6 +119,37 @@ void Terrain::makeVertex(std::vector<float>& height, int width, int x, int z)
 	m_vertices.push_back((float)x / (m_width * m_cellSize));
 	m_vertices.push_back((float)z / (m_height * m_cellSize));
 }
+double Terrain::cycleOctaves(glm::vec3 pos, int ocataves)
+{
+	float total = 0.0f;
+	float maxAmplitude = 0.0f;
+
+	float amplitude = 100.0f;
+	float frequency = 0.005f;
+
+	for (int i = 0; i < ocataves; i++)
+	{
+		double x = pos.x * frequency;
+		double y = pos.y * frequency;
+		total += perlin.noise(x, y, 0.01) * amplitude;
+		maxAmplitude += amplitude;
+		frequency *= 2;
+		amplitude /= 2;
+	}
+	return ((total / maxAmplitude) - 0.5f) * 300;
+}
+//void Terrain::makeVertex(std::vector<float>& height, int width, int x, int z)
+//{
+//	//x y z position
+//	m_vertices.push_back((float)x); //xPos
+//	m_vertices.push_back(height[x * width + z] * 10); //yPos - always 0 for now. Going to calculate this on GPU - could change to calclaute it here.
+//	//m_vertices.push_back(0); //yPos - always 0 for now. Going to calculate this on GPU - could change to calclaute it here.
+//	m_vertices.push_back((float)z); //zPos
+//
+//	   // add texture coords
+//	m_vertices.push_back((float)x / (m_width * m_cellSize));
+//	m_vertices.push_back((float)z / (m_height * m_cellSize));
+//}
 
 
 

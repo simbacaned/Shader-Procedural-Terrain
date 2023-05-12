@@ -19,7 +19,7 @@ Use this class as the start point
 #include <iostream>
 #include <array>
 #include "Shader.h"
-
+#include "PerlinNoise.h"
 
 class Terrain
 {
@@ -29,8 +29,8 @@ public:
 	Terrain();
 	// draw terrain - this function could be moved to a Renderer class and Terrain class submits vertices to renderer
 	void render();
-
-
+	void setLine();
+	void setFill();
 
 private:
 	std::vector<float> m_vertices;
@@ -44,10 +44,12 @@ private:
 	int m_cellSize = 10;  // size of cell in grid and default values
 	int m_width = 50;      // how many cells wide
 	int m_height = 50;    // how many cells high (or long)
+	PerlinNoise perlin;
 
 	// calculate vertex positions and UV values
 	void makeVertices();
 	void makeVertex(std::vector<float>& height, int width, int x, int z);
+	double cycleOctaves(glm::vec3 pos, int numOctaves);
 
 	// setters
 	void setVAO();

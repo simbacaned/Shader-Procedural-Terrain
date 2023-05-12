@@ -67,8 +67,6 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
 			tessCtrlFile.close();
 			tessCtrlCode = tessCtrlStream.str();
 		}
-
-
 	}
 	catch (std::ifstream::failure e)
 	{
@@ -137,7 +135,12 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geo
 	// delete the shaders as they're linked into our program now and no longer necessery
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
-	//if (geometryPath != nullptr)
+	if (geometryPath != nullptr)
+		glDeleteShader(geometry);
+	if (tessEvalPath != nullptr)
+		glDeleteShader(tessEval);
+	if (tessCtrlPath != nullptr)
+		glDeleteShader(tessCtrl);
 
 
 }

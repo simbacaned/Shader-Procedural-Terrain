@@ -149,6 +149,7 @@
     <ClCompile Include="src\FPSCamera.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\InputHandler.cpp" />
+    <ClCompile Include="src\PerlinNoise.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\stb_image.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="include\FPSCamera.h" />
     <ClInclude Include="include\GLFWinputCodes.h" />
     <ClInclude Include="include\InputHandler.h" />
+    <ClInclude Include="include\PerlinNoise.h" />
     <ClInclude Include="include\Properties.h" />
     <ClInclude Include="include\Scene.h" />
     <ClInclude Include="include\Shader.h" />
@@ -168,6 +170,7 @@
     <ClInclude Include="include\WindowManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Shaders\billboard.gs" />
     <None Include="..\Shaders\Norms.gs" />
     <None Include="..\Shaders\plainFrag.fs" />
     <None Include="..\Shaders\plainVert.vs" />

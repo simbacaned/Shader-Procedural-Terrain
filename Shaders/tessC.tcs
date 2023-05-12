@@ -30,17 +30,16 @@ void main()
    if (gl_InvocationID==0)
    {
 		   // Calculate the tessellation levels
-          gl_TessLevelOuter[0] = GetTessLevel(eyeToVertDist1, eyeToVertDist2) ; 
-          gl_TessLevelOuter[1] = GetTessLevel(eyeToVertDist2, eyeToVertDist0) ;  
-          gl_TessLevelOuter[2] = GetTessLevel(eyeToVertDist0, eyeToVertDist1) ; 
-          gl_TessLevelInner[0] = gl_TessLevelOuter[2] ; 
+          gl_TessLevelOuter[0] = GetTessLevel(eyeToVertDist1, eyeToVertDist2); 
+          gl_TessLevelOuter[1] = GetTessLevel(eyeToVertDist2, eyeToVertDist0);  
+          gl_TessLevelOuter[2] = GetTessLevel(eyeToVertDist0, eyeToVertDist1); 
+          gl_TessLevelInner[0] = gl_TessLevelOuter[2]; 
 
    }
 
    // pass through position and normal information
    FragPosTC[gl_InvocationID]  = FragPos[gl_InvocationID] ;
    TexCoordsTC[gl_InvocationID] = TexCoords[gl_InvocationID] ;
-
 }
 
 float GetTessLevel(float Distance0, float Distance1)
