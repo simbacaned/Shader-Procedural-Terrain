@@ -55,9 +55,9 @@ private:
     GLFWwindow* m_window;
     InputHandler* m_rawHandler = new InputHandler();
     void initialise();
-    float m_clearR =  0.0f;
-    float m_clearG =  0.0f;
-    float m_clearB =  0.0f;
+    float m_clearR =  0.2f;
+    float m_clearG =  0.8f;
+    float m_clearB =  1.0f;
     const char* m_title;
     bool m_vSync;
     int m_width, m_height;
